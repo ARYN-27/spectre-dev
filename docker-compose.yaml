@@ -13,4 +13,6 @@ services:
           devices:
             - driver: nvidia
               count: 0
-              capabilities: [gpu]
+              capabilities: [ gpu ]
+        limits:
+          nvidia.com/gpu: 4G
