@@ -6,10 +6,21 @@ WORKDIR /spectre-code
 
 #Install requirements
 RUN pip install -U jupyterlab pandas matplotlib
+
 #Create a directory "dataset" to mount the datasets later
 RUN mkdir dataset
+
 #Install npm & nodejs for jupyter-lab extensions
-RUN apt install nodejs npm
+RUN pip install nodejs
+
+# JupyterLab Extensions
+RUN jupyter labextension install jupyterlab-spreadsheet
+RUN pip install jupyterlab_tensorboard
+RUN pip install jupyterlab-system-monitor
+RUN pip install jupyterlab-git
+RUN pip install jupyterlab-horizon-theme
+RUN pip install jupyterlab_execute_time
+RUN pip install jupyterlab_nvdashboard
 
 #Expose port 8888 for JupyterLab
 EXPOSE 8888
