@@ -1,25 +1,16 @@
-version: '2.0'
+version: '1.0'
 services:
-  tensorflow:
+  jupyter-lab:
     build: .
     ports:
       - "8888:8888"
     volumes:
       - /home/aryn/spectre-dev/spectre-code:/spectre-code
       - /mnt/c/SPECTRE/Dataset:/spectre-code/dataset
-    runtime: nvidia
-    environment:
-      NVIDIA_VISIBLE_DEVICES: all
-      NVIDIA_DRIVER_CAPABILITIES: all
-      NVIDIA_REQUIRE_CUDA: "cuda>=10.0"
-      NVIDIA_GPU_MEMORY_LIMIT: "4096"
     deploy:
       resources:
-        limits:
-          nvidia_gpu: 4
-          nvidia.com/gpu: 4G
-      placement:
-        constraints:
-          - "node.labels.gpu=true"
-          - "node.role!=manager"
-    command: [ "jupyter-lab", "--ip=0.0.0.0", "--allow-root" ]
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 0
+              capabilities: [gpu]
