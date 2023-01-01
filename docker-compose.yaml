@@ -7,8 +7,16 @@ services:
     volumes:
       - /home/aryn/spectre-dev/spectre-code:/spectre-code
       - /mnt/c/SPECTRE/Dataset:/spectre-code/dataset
+    #runtime: nvidia
+    environment:
+      #NVIDIA_VISIBLE_DEVICES: all
+      #NVIDIA_DRIVER_CAPABILITIES: all
+      #NVIDIA_REQUIRE_CUDA: "cuda>=10.0"
+      NVIDIA_GPU_MEMORY_LIMIT: "4096"
     deploy:
       resources:
+        #limits:
+          #nvidia.com/gpu.mem: '4g'
         reservations:
           devices:
             - driver: nvidia
@@ -16,3 +24,7 @@ services:
               capabilities: [ gpu ]
         #limits:
           #nvidia.com/gpu: 4G
+      placement:
+        constraints:
+          - "node.labels.gpu=true"
+          - "node.role!=manager"
