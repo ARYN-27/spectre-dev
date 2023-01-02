@@ -1,4 +1,6 @@
 version: '1.1'
+#volumes:
+  #spectre-dev-volume:
 services:
   jupyter-lab:
     #container_name: spectre-container
@@ -8,6 +10,7 @@ services:
     volumes:
       - /home/aryn/spectre-dev/spectre-code:/spectre-code
       - /mnt/c/SPECTRE/Dataset:/spectre-code/dataset
+      #- spectre-dev-volume:/
     deploy:
       resources:
         reservations:
