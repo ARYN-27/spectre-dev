@@ -30,4 +30,4 @@ RUN pip install jupyterlab-code-formatter
 EXPOSE 8888
 
 # Start JupyterLab with root and no broswer spawn
-ENTRYPOINT ["jupyter", "lab","--ip=0.0.0.0","--allow-root","--no-browser"]
+ENTRYPOINT ["jupyter", "lab","--ip=0.0.0.0","--allow-root","--no-browser","--ResourceUseDisplay.track_cpu_percent=True"]
