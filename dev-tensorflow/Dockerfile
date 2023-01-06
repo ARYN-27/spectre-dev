@@ -1,3 +1,8 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Dev Environment: dev-tensorflow
+#   https://www.tensorflow.org/install/docker
+#-----------------------------------------------------------------------------------------------------------------------
+
 #Container is based on latest Tensorflow image
 FROM tensorflow/tensorflow:latest-gpu 
 

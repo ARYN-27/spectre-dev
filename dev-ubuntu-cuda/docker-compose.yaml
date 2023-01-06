@@ -1,0 +1,16 @@
+version: '1'
+services:
+  jupyter-lab:
+    build: .
+    ports:
+      - "8888:8888"
+    volumes:
+      - /home/aryn/spectre-dev/spectre-code:/spectre-code
+      - /mnt/c/SPECTRE/Dataset:/spectre-code/dataset
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
