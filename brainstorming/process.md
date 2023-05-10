@@ -7,3 +7,9 @@
 3. Create ANN with Tensorflow API
 4. Train model with Training Dataset
 5. Evaluate model with Validation Dataset 
+
+# Data Input
+
+## Data Flow
+
+PCAP -> XML -> NPY
