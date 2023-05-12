@@ -2,7 +2,7 @@
 # https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.7.1/ubuntu2204/devel/cudnn8/Dockerfile
 #-----------------------------------------------------------------------------------------------------------------------
 
-FROM nvidia/cuda:11.2.1-devel-ubuntu20.04 as base
+FROM nvidia/cuda:11.8.0-devel-ubuntu22.04 as base
 ENV DEBIAN_FRONTEND noninteractive
 
 #The working directory for the containers is /spectre-code
@@ -27,11 +27,11 @@ RUN mkdir dataset
 
 FROM base as base-amd64
 
-ENV NV_CUDNN_VERSION 8.1.1.33
+ENV NV_CUDNN_VERSION 8.6.0.163
 ENV NV_CUDNN_PACKAGE_NAME "libcudnn8"
 
-ENV NV_CUDNN_PACKAGE "libcudnn8=$NV_CUDNN_VERSION-1+cuda11.2"
-ENV NV_CUDNN_PACKAGE_DEV "libcudnn8-dev=$NV_CUDNN_VERSION-1+cuda11.2"
+ENV NV_CUDNN_PACKAGE "libcudnn8=$NV_CUDNN_VERSION-1+cuda11.8"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn8-dev=$NV_CUDNN_VERSION-1+cuda11.8"
 
 
 #FROM base as base-arm64
