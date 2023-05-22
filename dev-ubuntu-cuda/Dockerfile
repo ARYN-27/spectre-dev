@@ -80,7 +80,7 @@ RUN pip install tensorflow
 #   INSTALL JUPYTERLAB and requirements
 #-----------------------------------------------------------------------------------------------------------------------
 
-RUN pip install -U jupyterlab pandas matplotlib scipy ipywidgets keras h5py
+RUN pip install -U jupyterlab pandas matplotlib scipy ipywidgets keras h5py scikit-learn scapy "dask[complete]" seaborn
 
 #-----------------------------------------------------------------------------------------------------------------------
 #   JUPYTER EXTENSIONS

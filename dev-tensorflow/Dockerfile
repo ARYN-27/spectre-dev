@@ -13,7 +13,7 @@ WORKDIR /spectre-code
 RUN pip install --upgrade pip
 
 #Install requirements
-RUN pip install -U jupyterlab pandas matplotlib
+RUN pip install -U jupyterlab pandas matplotlib scikit-learn scapy "dask[complete]"  scipy ipywidgets h5py seaborn
 
 #Create a directory "dataset" to mount the datasets later
 RUN mkdir dataset
