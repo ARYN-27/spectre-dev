@@ -8,10 +8,10 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      #- /home/aryn/spectre-dev/spectre-code:/spectre-code
-      #- /mnt/c/SPECTRE/Dataset:/spectre-code/dataset
       - /home/aryn/spectre-dev/spectre-code:/spectre-code
       - /home/aryn/spectre-dev/dataset:/spectre-code/dataset
+      #- /home/aryn/spectre-dev/spectre-code:/spectre-code
+      #- /home/aryn/spectre-dev/dataset:/spectre-code/dataset
       #- spectre-dev-volume:/
     deploy:
       resources:

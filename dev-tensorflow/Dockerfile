@@ -13,7 +13,18 @@ WORKDIR /spectre-code
 RUN pip install --upgrade pip
 
 #Install requirements
-RUN pip install -U jupyterlab pandas matplotlib scikit-learn scapy "dask[complete]"  scipy ipywidgets h5py seaborn
+RUN pip install -U jupyterlab 
+RUN pip install -U pandas 
+RUN pip install -U matplotlib 
+RUN pip install -U scikit-learn 
+RUN pip install -U scapy 
+RUN pip install -U "dask[complete]"
+RUN pip install -U scipy 
+RUN pip install -U ipywidgets 
+RUN pip install -U h5py 
+RUN pip install -U seaborn 
+RUN pip install -U confluent-kafka
+RUN pip install -U scikit-plot
 
 #Create a directory "dataset" to mount the datasets later
 RUN mkdir dataset
