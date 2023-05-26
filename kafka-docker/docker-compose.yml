@@ -1,3 +1,9 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Kafka Environment: kafka-docker
+#   https://hub.docker.com/r/bitnami/kafka
+#   https://hub.docker.com/r/bitnami/zookeeper
+#-----------------------------------------------------------------------------------------------------------------------
+
 version: '2'
 services:
   zookeeper:
@@ -6,27 +12,28 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
-  
   kafka:
     image: 'bitnami/kafka:latest'
     ports:
       - '9092:9092'
-    user: "1000:1000"
     environment:
       - KAFKA_BROKER_ID=1
       - KAFKA_LISTENERS=PLAINTEXT://:9092
-      #- KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_CONTROLLER_LISTENERS=PLAINTEXT://:9093
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_MODE=zookeeper
+      - KAFKA_ENABLE_KRAFT=no
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT://:9093
     volumes:
       - kafka-data:/bitnami/kafka
     depends_on:
       - zookeeper
 volumes:
   kafka-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/aryn/spectre-dev/kafka-docker/kafka-data/
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: /home/aryn/spectre-dev/kafka-docker/kafka-data
