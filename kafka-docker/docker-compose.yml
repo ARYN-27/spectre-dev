@@ -26,14 +26,24 @@ services:
       - KAFKA_CFG_MODE=zookeeper
       - KAFKA_ENABLE_KRAFT=no
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT://:9093
+      - KAFKA_CLUSTER_ID=spectre-kafka
     volumes:
       - kafka-data:/bitnami/kafka
     depends_on:
       - zookeeper
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    environment:
+      - DYNAMIC_CONFIG_ENABLED=true
+    volumes:
+      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 volumes:
   kafka-data:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      o: bind
-#      device: /home/aryn/spectre-dev/kafka-docker/kafka-data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/aryn/spectre-dev/kafka-docker/kafka-data
