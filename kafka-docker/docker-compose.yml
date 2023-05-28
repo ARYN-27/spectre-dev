@@ -1,7 +1,8 @@
 #-----------------------------------------------------------------------------------------------------------------------
-#   Kafka Environment: kafka-docker
+#   Kafka Environment: kafka-docker with kafka-ui
 #   https://hub.docker.com/r/bitnami/kafka
 #   https://hub.docker.com/r/bitnami/zookeeper
+#   https://github.com/provectus/kafka-ui
 #-----------------------------------------------------------------------------------------------------------------------
 
 version: '2'
@@ -21,25 +22,29 @@ services:
       - KAFKA_LISTENERS=PLAINTEXT://:9092
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
       - KAFKA_CONTROLLER_LISTENERS=PLAINTEXT://:9093
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181  # Change this line
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_MODE=zookeeper
       - KAFKA_ENABLE_KRAFT=no
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT://:9093
-      - KAFKA_CLUSTER_ID=spectre-kafka
+      #- KAFKA_CLUSTER_ID=spectre-kafka
+      #- KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_MESSAGE_MAX_BYTES=10485760
+      - KAFKA_CFG_REPLICA_FETCH_MAX_BYTES=10485760
+      - KAFKA_CFG_MAX_REQUEST_SIZE=10485760
     volumes:
       - kafka-data:/bitnami/kafka
+      #- /home/aryn/spectre-dev/kafka-docker/kafka-config/server.properties:/bitnami/kafka/config/server.properties
     depends_on:
       - zookeeper
-  kafka-ui:
-    container_name: kafka-ui
-    image: provectuslabs/kafka-ui:latest
-    ports:
-      - 8080:8080
-    environment:
-      - DYNAMIC_CONFIG_ENABLED=true
-    volumes:
-      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+#  kafka-ui:
+#    container_name: kafka-ui
+#    image: provectuslabs/kafka-ui:latest
+#    ports:
+#      - 8080:8080
+#    environment:
+#      - DYNAMIC_CONFIG_ENABLED=true
+#    volumes:
+#      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 volumes:
   kafka-data:
     driver: local

@@ -1,0 +1,64 @@
+# Kafka UI configuration
+
+# Kafka cluster information
+clusters:
+  - name: spectre-kafka
+    brokers:
+      - host: zookeeper
+        port: 2181
+        protocol: plaintext
+        bootstrap_servers: 127.0.0.1:9092
+
+# Kafka UI settings
+ui:
+  auth:
+    enabled: false
+  metrics:
+    enabled: true
+    jmx:
+      enabled: true
+
+# Kafka UI plugins
+plugins:
+  - id: consumers-group-view
+    class: com.provectuslabs.ui.plugins.consumergroup.ConsumerGroupsView
+    order: 10
+  - id: topics-view
+    class: com.provectuslabs.ui.plugins.topics.TopicsView
+    order: 20
+  - id: producers-view
+    class: com.provectuslabs.ui.plugins.producers.ProducersView
+    order: 30
+  - id: schema-registry-view
+    class: com.provectuslabs.ui.plugins.schemas.SchemaRegistryView
+    order: 40
+  - id: connectors-view
+    class: com.provectuslabs.ui.plugins.connectors.ConnectorsView
+    order: 50
+  - id: admin-cli
+    class: com.provectuslabs.ui.plugins.admincli.AdminCli
+    order: 60
+
+# Kafka UI authentication
+security:
+  token:
+    enabled: false
+  oauth:
+    enabled: false
+
+# Kafka UI metrics
+metrics:
+  jmx:
+    enabled: true
+  graphite:
+    enabled: false
+  prometheus:
+    enabled: false
+
+# Kafka UI logs
+logging:
+  file:
+    enabled: true
+    file-path: "/var/log/kafka-ui.log"
+    refresh: 10
+
