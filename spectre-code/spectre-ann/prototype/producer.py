@@ -1,3 +1,6 @@
+# consumer.py
+# https://www.phind.com/search?cache=cf139efb-38e8-4fb5-9cda-5c67194a11a6
+
 from confluent_kafka import Producer, Consumer, KafkaError
 import pandas as pd
 import numpy as np

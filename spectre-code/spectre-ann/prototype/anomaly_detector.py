@@ -1,3 +1,7 @@
+# anomalay_detector.py
+# https://www.phind.com/search?cache=cf139efb-38e8-4fb5-9cda-5c67194a11a6
+
+
 from confluent_kafka import Consumer, Producer, KafkaError
 import numpy as np
 import tensorflow as tf
