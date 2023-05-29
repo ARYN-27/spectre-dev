@@ -52,24 +52,25 @@ consumer.subscribe(['detect_anomalies'])
 
 received_data_buffer = []
 
+# Consume messages and process them using the on_message function
 def on_message(msg):
     global received_data_buffer
     if msg.error():
         print(f"Consumer error: {msg.error()}")
     else:
-        received_data_str = msg.value()  # Convert the received data to a string
-        if received_data_str == b'\x80\x02':  # Check if received_data_str is the separator
-            print(f"Received data buffer length: {len(received_data_buffer)}")  # Debug: Print the buffer length
-            if len(received_data_buffer) == 7:
-                X_received = received_data_buffer
-                prediction = model.predict(X_received)
-                print(f'Prediction: {prediction}')
-            else:
-                print("Unexpected data length, skipping this message")
+        received_data_str = msg.value().decode('utf-8')  # Convert the received data to a string
+        received_data_list = received_data_str.strip('[]').split(',')  # Convert the received data string to a list of strings using comma as the delimiter
+        received_data_buffer.append(received_data_list)  # Append the list of strings to the buffer
+
+        if len(received_data_buffer) == 7:
+            X_received = np.array(received_data_buffer, dtype=np.float64)  # Convert the buffer to a numpy array of floats
+            prediction = model.predict(X_received)
+            print(f'Prediction: {prediction}')
             received_data_buffer = []  # Reset the buffer
         else:
             print(f"Received data length: {len(received_data_str)}")  # Debug: Print the received_data_str length
-            received_data_buffer.append(received_data_str)
+
+
 
 # Consume messages and process them using the on_message function
 while True:

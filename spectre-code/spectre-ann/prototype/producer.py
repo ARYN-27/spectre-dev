@@ -99,7 +99,8 @@ producer.produce('handshake', 'READY')
 # ... (keep the code for sending the scaled data to the Kafka producer line by line)
 
 for i, row in X.iterrows():
-    serialized_data = str(row)  # Convert the row to a string
+    #serialized_data = str(row)  # Convert the row to a string
+    serialized_data = ','.join(map(str, row.values))
     print(f"Serialized data: {serialized_data}")
     producer.produce('detect_anomalies', serialized_data)
 

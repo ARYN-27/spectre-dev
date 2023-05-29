@@ -26,25 +26,19 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_ENABLE_KRAFT=no
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT://:9093
-      #- KAFKA_CLUSTER_ID=spectre-kafka
-      #- KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
-      - KAFKA_CFG_MESSAGE_MAX_BYTES=10485760
       - KAFKA_CFG_REPLICA_FETCH_MAX_BYTES=10485760
       - KAFKA_CFG_MAX_REQUEST_SIZE=10485760
     volumes:
       - kafka-data:/bitnami/kafka
-      #- /home/aryn/spectre-dev/kafka-docker/kafka-config/server.properties:/bitnami/kafka/config/server.properties
-    depends_on:
-      - zookeeper
-#  kafka-ui:
-#    container_name: kafka-ui
-#    image: provectuslabs/kafka-ui:latest
-#    ports:
-#      - 8080:8080
-#    environment:
-#      - DYNAMIC_CONFIG_ENABLED=true
-#    volumes:
-#      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 9090:8080
+    environment:
+      - DYNAMIC_CONFIG_ENABLED=true
+    volumes:
+      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yml
 volumes:
   kafka-data:
     driver: local
@@ -52,3 +46,4 @@ volumes:
       type: none
       o: bind
       device: /home/aryn/spectre-dev/kafka-docker/kafka-data
+
