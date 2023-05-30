@@ -1,4 +1,4 @@
-# consumer.py
+# producer.py
 # https://www.phind.com/search?cache=cf139efb-38e8-4fb5-9cda-5c67194a11a6
 
 from confluent_kafka import Producer, Consumer, KafkaError
@@ -6,6 +6,13 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, LabelBinarizer
 from sklearn.decomposition import PCA
+import time
+
+print("==================================")
+print("SPECTRE - PRODUCER MODULE")
+print("==================================")
+time.sleep(1)
+
 
 # ... (keep the code for data preprocessing)
 def prod_datapreprocess(csv_file):
@@ -58,13 +65,12 @@ def prod_datapreprocess(csv_file):
 
     return X
 
-X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
+# DDoS Attack CSV
+#X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
 
+# Bening CSV
+X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Monday-WorkingHours.pcap_ISCX.csv')
 
-#scaler = StandardScaler()
-#X_scaled = scaler.fit_transform(X)
-
-#separator = np.array([-1], dtype=np.float32) 
 
 producer_conf = {
     'bootstrap.servers': 'localhost:9092',
@@ -85,15 +91,27 @@ handshake_consumer_conf = {
 handshake_consumer = Consumer(handshake_consumer_conf)
 handshake_consumer.subscribe(['handshake'])
 
+timeout_counter = 0
+timeout_limit = 10
+
 while True:
     msg = handshake_consumer.poll(1.0)
     if msg is None:
+        timeout_counter += 1
+        if timeout_counter >= timeout_limit:
+            print("==================================")
+            print("CONNECTION FAILURE")
+            print("==================================")
+            exit(1)
         continue
     if msg.error():
         print(f"Handshake consumer error: {msg.error()}")
     else:
         handshake_msg = msg.value().decode('utf-8')
         if handshake_msg == 'READY':
+            print("==================================")
+            print("CONNECTION ESTABLISHED")
+            print("==================================")
             break
 
 # Send a ready message to the consumer
@@ -106,5 +124,6 @@ for i, row in X.iterrows():
     serialized_data = ','.join(map(str, row.values))
     print(f"Serialized data: {serialized_data}")
     producer.produce('detect_anomalies', serialized_data)
+    time.sleep(1.5)
 
 producer.flush()
