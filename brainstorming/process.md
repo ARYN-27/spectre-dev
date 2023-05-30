@@ -14,11 +14,13 @@
 
 PCAP -> XML -> NPY
 
-# Search Thread
+# Search Thread/References
 
 - https://www.phind.com/search?cache=b2398b4f-4454-41b1-8560-897892b84909&init=true
+- https://github.com/rodrigo-arenas/kafkaml-anomaly-detection
+- https://www.phind.com/search?cache=cf139efb-38e8-4fb5-9cda-5c67194a11a6
 
-## Kafka Explained
+# Kafka Explained
 
 ### How to use Kafka
 
@@ -78,3 +80,4 @@ consumer = kafka.KafkaConsumer('my-topic')
    consumer.close() 
 ```
 This application will read data from the my-topic topic and then perform the desired preprocessing steps. The processed data will then be pushed to the my-other-topic topic. You can use this code as a starting point for your own preprocessing application. You can modify the code to perform the desired preprocessing steps. You can also use different programming languages to write your application.
+

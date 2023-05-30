@@ -68,8 +68,11 @@ def prod_datapreprocess(csv_file):
 # DDoS Attack CSV
 #X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
 
+# DDoS Prime CSV
+#X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/DDoS_Dataset/ddos_balanced/final_dataset.csv')
+
 # Bening CSV
-X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Monday-WorkingHours.pcap_ISCX.csv')
+#X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Monday-WorkingHours.pcap_ISCX.csv')
 
 
 producer_conf = {
