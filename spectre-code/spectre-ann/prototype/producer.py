@@ -24,19 +24,21 @@ def prod_datapreprocess(csv_file):
     
     dimensions_num_for_PCA = 7
     
-    # Clean the dataset by removing NaN, inf, and -inf values
+    # Function to clean the dataset by removing NaN, inf, and -inf values
     def clean_dataset(df):
         assert isinstance(df, pd.DataFrame), "df needs to be a pd.DataFrame"
         df.dropna(inplace=True)
         indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(axis=1)
         return df[indices_to_keep]
 
+    # Function to get PCA feature names
     def get_PCA_feature_names(num_of_pca_components):
         feature_names = []
         for i in range(num_of_pca_components):
             feature_names.append(f"Principal component {i+1}")
         return feature_names
     
+    # Preprocess the dataset
     df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
     df_cleaned = df.copy()
     df_cleaned = clean_dataset(df_cleaned)
@@ -49,6 +51,7 @@ def prod_datapreprocess(csv_file):
     df_cleaned.drop('label', axis=1, inplace=True)
     df_features = df_cleaned.columns.tolist()
 
+    # Perform feature scaling
     df_scaled = StandardScaler().fit_transform(df_cleaned)
     df_scaled = pd.DataFrame(data=df_scaled, columns=df_features)
 
@@ -60,14 +63,18 @@ def prod_datapreprocess(csv_file):
     principal_component_headings = get_PCA_feature_names(dimensions_num_for_PCA)
     df_pc = pd.DataFrame(data=principal_components, columns=principal_component_headings)
 
+    # Combine the principal components with the original labels
     df_final = pd.concat([df_pc, df_labels], axis=1)
 
+    # Perform label binarization. Converts "ANOMALY" = 1 and "BENIGN" = 0.
     lb = LabelBinarizer()
     df_final['label'] = lb.fit_transform(df_final['label'])
 
+    # Split the dataset into features (X) and labels (y)
     X = df_final.drop(['label'], axis = 1)
     y = df_final['label']
 
+    # Returns features(X)
     return X
 
 
