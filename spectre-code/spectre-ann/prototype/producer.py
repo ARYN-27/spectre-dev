@@ -1,6 +1,7 @@
 # producer.py
 # https://www.phind.com/search?cache=cf139efb-38e8-4fb5-9cda-5c67194a11a6
 
+# Import necessary libraries
 from confluent_kafka import Producer, Consumer, KafkaError
 import pandas as pd
 import numpy as np
@@ -8,18 +9,22 @@ from sklearn.preprocessing import StandardScaler, LabelBinarizer
 from sklearn.decomposition import PCA
 import time
 
+# Print the welcome message
 print("==================================")
 print("SPECTRE - PRODUCER MODULE")
 print("==================================")
 time.sleep(1)
 
 
-# ... (keep the code for data preprocessing)
+# Define a function to preprocess the data
 def prod_datapreprocess(csv_file):
+    
+    # Read a CSV file and create a DataFrame
     df = pd.read_csv(csv_file)
     
     dimensions_num_for_PCA = 7
-
+    
+    # Clean the dataset by removing NaN, inf, and -inf values
     def clean_dataset(df):
         assert isinstance(df, pd.DataFrame), "df needs to be a pd.DataFrame"
         df.dropna(inplace=True)
@@ -65,8 +70,11 @@ def prod_datapreprocess(csv_file):
 
     return X
 
+
+# Read the CSV file and preprocess the data
+
 # DDoS Attack CSV
-#X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
+X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
 
 # DDoS Prime CSV
 #X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/DDoS_Dataset/ddos_balanced/final_dataset.csv')
@@ -74,16 +82,16 @@ def prod_datapreprocess(csv_file):
 # Bening CSV
 #X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Monday-WorkingHours.pcap_ISCX.csv')
 
-
+# Set the producer configuration
 producer_conf = {
     'bootstrap.servers': 'localhost:9092',
     'max.in.flight.requests.per.connection': 1   # Add this line to set the maximum number of in-flight messages to 1
 }
 
+# Create a Kafka producer
 producer = Producer(producer_conf)
 
-
-# Handshake with the consumer
+# Set the handshake consumer configuration
 handshake_consumer_conf = {
     'bootstrap.servers': 'localhost:9092',
     'group.id': 'producer_handshake_group',
@@ -91,13 +99,17 @@ handshake_consumer_conf = {
     'auto.offset.reset': 'earliest'
 }
 
+# Create a Kafka consumer for the handshake
 handshake_consumer = Consumer(handshake_consumer_conf)
 handshake_consumer.subscribe(['handshake'])
 
+# Wait for the handshake from the consumer
 timeout_counter = 0
 timeout_limit = 10
 
+# Perform handshake with the consumer
 while True:
+    # ... (Handshake waiting code)
     msg = handshake_consumer.poll(1.0)
     if msg is None:
         timeout_counter += 1
@@ -120,8 +132,7 @@ while True:
 # Send a ready message to the consumer
 producer.produce('handshake', 'READY')
 
-# ... (keep the code for sending the scaled data to the Kafka producer line by line)
-
+# Iterate through the preprocessed data and send it to the Kafka producer line by line
 for i, row in X.iterrows():
     #serialized_data = str(row)  # Convert the row to a string
     serialized_data = ','.join(map(str, row.values))
@@ -129,4 +140,5 @@ for i, row in X.iterrows():
     producer.produce('detect_anomalies', serialized_data)
     time.sleep(1.5)
 
+# Flush the producer to ensure all messages are sent
 producer.flush()

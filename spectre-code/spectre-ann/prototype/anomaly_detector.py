@@ -7,16 +7,16 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import time
 
+# Print the header for the anomaly detector module
 print("==================================")
 print("SPECTRE - CONSUMER & ANOMALY DETECTOR MODULE")
 print("==================================")
 time.sleep(1)
 
-# ... (keep the code for data preprocessing and Kafka consumer initialization)
-
 # Load the pre-trained TensorFlow model
 model = load_model('/home/aryn/spectre-dev/spectre-code/spectre-ann/Model/DDOS_2/A/spectre_ddos_2_h5.h5')
 
+# Print the header for the anomaly detector module
 consumer_conf = {
     'bootstrap.servers': 'localhost:9092',
     'group.id': 'mygroup',
@@ -25,16 +25,19 @@ consumer_conf = {
     'queued.min.messages': 1  # Add this line to set the minimum number of records in the queue to 1
 }
 
+# Create a Kafka consumer instance
 consumer = Consumer(consumer_conf)
 
-# Handshake with the producer
+# Define Kafka producer configuration for handshake with the consumer
 handshake_producer_conf = {
     'bootstrap.servers': 'localhost:9092'
 }
 
+# Create a Kafka producer instance for handshake
 handshake_producer = Producer(handshake_producer_conf)
 handshake_producer.produce('handshake', 'READY')
 
+# Define Kafka consumer configuration for handshake with the producer
 handshake_consumer_conf = {
     'bootstrap.servers': 'localhost:9092',
     'group.id': 'consumer_handshake_group',
@@ -42,12 +45,15 @@ handshake_consumer_conf = {
     'auto.offset.reset': 'earliest'
 }
 
+# Create a Kafka consumer instance for handshake
 handshake_consumer = Consumer(handshake_consumer_conf)
 handshake_consumer.subscribe(['handshake'])
 
+# Initialize timeout counter and limit for handshake
 timeout_counter = 0
 timeout_limit = 10
 
+# Perform handshake with the producer
 while True:
     msg = handshake_consumer.poll(1.0)
     if msg is None:
@@ -68,20 +74,17 @@ while True:
             print("==================================")
             break
 
-
-
+# Subscribe to the 'detect_anomalies' topic
 consumer.subscribe(['detect_anomalies'])
 
+# Initialize the data buffer
 received_data_buffer = []
 
 # Consume messages and process them using the on_message function
 def on_message(msg):
     global received_data_buffer
-    # Choosing a higher threshold value (e.g., 0.7) will reduce the chances of benign data being misclassified as anomalies (false positives)
-    # but might also result in missing some actual anomalies (false negatives). The best threshold value balances the trade-off between false positives and false negatives.
-    # One approach to determine a good threshold value is to learn from past data, identifying the minimum and maximum deviations and setting the threshold accordingly, possibly with a scaling factor for flexibility.
-    threshold = 0.7  # Set the threshold value for anomaly detection
     
+    threshold = 0.7  # Set the threshold value for anomaly detection
     
     if msg.error():
         print(f"Consumer error: {msg.error()}")
