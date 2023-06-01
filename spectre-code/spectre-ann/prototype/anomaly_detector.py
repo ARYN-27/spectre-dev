@@ -6,9 +6,9 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import time
-import csv
-import h5py
-import pandas as pd
+from rich.console import Console
+from rich.table import Table
+
 
 
 # Print the header for the anomaly detector module
@@ -87,11 +87,8 @@ received_data_buffer = []
 # Initialize the predictions lis
 predictions_list = []
 
-# Save the predictions to an HDF5 file
-def write_to_hdf5(data, filename):
-    data = data.astype(np.float64)  # Convert the data to a float64 dtype
-    with h5py.File(filename, 'w') as hdf:
-        dset = hdf.create_dataset('predictions', data=data)
+# Rich Output
+console = Console()
 
 
 # Consume messages and process them using the on_message function
@@ -109,19 +106,32 @@ def on_message(msg):
 
         if len(received_data_buffer) == 7:
             X_received = np.array(received_data_buffer, dtype=np.float64)  # Convert the buffer to a numpy array of floats
-            prediction = model.predict(X_received)
-            print(f'Prediction: {prediction}')
+            prediction = model.predict(X_received, verbose=0)
+            #print(f'Prediction: {prediction}')
+            
+            # Detection Table
+            # Create a table for the prediction output
+            table = Table(title="Detection")
+            table.add_column("Prediction")
+            table.add_column("Result")
             
             # Check if there is an anomaly and print the appropriate message
             if np.any(prediction > threshold):
-                print("==================================")
-                print("ANOMALY")
-                print("==================================")
+                #print("==================================")
+                #print("ANOMALY")
+                #print("==================================")
+                result = "ANOMALY"
             else:
-                print("==================================")
-                print("BENIGN")
-                print("==================================")
+                #print("==================================")
+                #print("BENIGN")
+                #print("==================================")
+                result = "BENIGN"
+            
+            #for pred in prediction:
+            table.add_row(str(prediction), result)
                 
+            console.print(table)
+                        
             received_data_buffer = []  # Reset the buffer
             #predictions_list.append(prediction) # Append the prediction to the predictions_list
         else:
@@ -130,8 +140,9 @@ def on_message(msg):
             
             # Debug: Print the received_data_buffer
             print(f"Received data instances: {len(received_data_buffer)}") 
-
-# Consume messages and process them using the on_message function
+            
+            
+# Start the Live context manager and consume messages
 while True:
     msg = consumer.poll(1.0)
     if msg is None:
@@ -139,8 +150,4 @@ while True:
     if msg.error():
         print(f"Consumer error: {msg.error()}")
     else:
-        on_message(msg)
-        
-# Convert the predictions_list to a DataFrame and save it as an HDF5 file
-#predictions_df = pd.DataFrame(predictions_list, columns=['prediction'])
-#write_to_hdf5(predictions_df, '/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/kafka_output/predictions.h5')    
+        on_message(msg) 

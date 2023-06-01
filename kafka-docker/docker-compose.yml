@@ -87,6 +87,6 @@ volumes:
       type: none
       o: bind
       device: /home/aryn/spectre-dev/kafka-docker/kafka-data
-networks:
-  kafka_network:
-    driver: bridge
+#networks:
+#  kafka_network:
+#    driver: bridge
