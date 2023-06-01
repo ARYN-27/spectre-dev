@@ -3,11 +3,7 @@
 # Kafka cluster information
 clusters:
   - name: spectre-kafka
-    brokers:
-      - host: zookeeper
-        port: 2181
-        protocol: plaintext
-        bootstrap_servers: 127.0.0.1:9092
+    bootstrap_servers: 127.0.0.1:9092
 
 # Kafka UI settings
 ui:

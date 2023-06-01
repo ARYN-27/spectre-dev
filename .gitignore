@@ -1,2 +1,5 @@
 /dataset
 /kafka-docker/kafka-data
+/kafka-docker/elastic-data
+/kafka-docker/kibana-data
+/kafka-docker/logstash-data

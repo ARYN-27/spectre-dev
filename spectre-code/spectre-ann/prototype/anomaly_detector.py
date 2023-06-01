@@ -6,6 +6,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import time
+import csv
+import h5py
+import pandas as pd
+
 
 # Print the header for the anomaly detector module
 print("==================================")
@@ -80,11 +84,21 @@ consumer.subscribe(['detect_anomalies'])
 # Initialize the data buffer
 received_data_buffer = []
 
+# Initialize the predictions lis
+predictions_list = []
+
+# Save the predictions to an HDF5 file
+def write_to_hdf5(data, filename):
+    data = data.astype(np.float64)  # Convert the data to a float64 dtype
+    with h5py.File(filename, 'w') as hdf:
+        dset = hdf.create_dataset('predictions', data=data)
+
+
 # Consume messages and process them using the on_message function
 def on_message(msg):
     global received_data_buffer
     
-    threshold = 0.7  # Set the threshold value for anomaly detection
+    threshold = 0.65  # Set the threshold value for anomaly detection
     
     if msg.error():
         print(f"Consumer error: {msg.error()}")
@@ -109,6 +123,7 @@ def on_message(msg):
                 print("==================================")
                 
             received_data_buffer = []  # Reset the buffer
+            #predictions_list.append(prediction) # Append the prediction to the predictions_list
         else:
             # Debug: Print the received_data_str length
             #print(f"Received data length: {len(received_data_str)}")  
@@ -125,3 +140,7 @@ while True:
         print(f"Consumer error: {msg.error()}")
     else:
         on_message(msg)
+        
+# Convert the predictions_list to a DataFrame and save it as an HDF5 file
+#predictions_df = pd.DataFrame(predictions_list, columns=['prediction'])
+#write_to_hdf5(predictions_df, '/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/kafka_output/predictions.h5')    
