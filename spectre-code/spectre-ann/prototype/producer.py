@@ -8,12 +8,27 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler, LabelBinarizer
 from sklearn.decomposition import PCA
 import time
+import warnings
+import os
+from rich.console import Console
+from rich.text import Text
+
+# Suppress Python warnings
+warnings.filterwarnings("ignore")
+
+# Rich Output
+console = Console()
 
 # Print the welcome message
-print("==================================")
-print("SPECTRE - PRODUCER MODULE")
-print("==================================")
+#print("==================================")
+#print("SPECTRE - PRODUCER MODULE")
+#print("==================================")
+text = Text("===================================\n",style="bold magenta")
+text.append("SPECTRE - PRODUCER MODULE\n",style="bold magenta")
+text.append("===================================",style="bold magenta")
+console.print(text)
 time.sleep(1)
+
 
 
 # Define a function to preprocess the data

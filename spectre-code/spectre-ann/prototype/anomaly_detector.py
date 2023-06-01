@@ -8,13 +8,28 @@ from tensorflow.keras.models import load_model
 import time
 from rich.console import Console
 from rich.table import Table
+from rich.text import Text
+import warnings
+import os
 
+# Suppress Python warnings
+warnings.filterwarnings("ignore")
 
+# Suppress TensorFlow logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+# Rich Output
+console = Console()
+#
 # Print the header for the anomaly detector module
-print("==================================")
-print("SPECTRE - CONSUMER & ANOMALY DETECTOR MODULE")
-print("==================================")
+#console.print("==================================")
+#print("SPECTRE - CONSUMER & ANOMALY DETECTOR MODULE")
+#print("==================================")
+# Create a Text object with the desired styling
+text = Text("===================================\n",style="bold magenta")
+text.append("SPECTRE - CONSUMER & ANOMALY DETECTOR MODULE\n",style="bold magenta")
+text.append("===================================",style="bold magenta")
+console.print(text)
 time.sleep(1)
 
 # Load the pre-trained TensorFlow model
@@ -87,8 +102,7 @@ received_data_buffer = []
 # Initialize the predictions lis
 predictions_list = []
 
-# Rich Output
-console = Console()
+
 
 
 # Consume messages and process them using the on_message function
