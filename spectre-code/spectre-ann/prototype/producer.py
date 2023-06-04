@@ -9,7 +9,6 @@ from sklearn.preprocessing import StandardScaler, LabelBinarizer
 from sklearn.decomposition import PCA
 import time
 import warnings
-import os
 from rich.console import Console
 from rich.text import Text
 
@@ -18,7 +17,7 @@ warnings.filterwarnings("ignore")
 
 # Rich Output
 console = Console()
-
+ 
 # Print the welcome message
 #print("==================================")
 #print("SPECTRE - PRODUCER MODULE")

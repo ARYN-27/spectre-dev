@@ -11,12 +11,32 @@ from rich.table import Table
 from rich.text import Text
 import warnings
 import os
+import sqlite3
+
 
 # Suppress Python warnings
 warnings.filterwarnings("ignore")
 
 # Suppress TensorFlow logs
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+
+# Database Setup/Connection
+# Connect to the SQLite database at the specified location
+db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/database/predictions.db"
+conn = sqlite3.connect(db_path)
+c = conn.cursor()
+
+# Create Table if not exists
+c.execute('''
+       CREATE TABLE IF NOT EXISTS predictions (
+           id INTEGER PRIMARY KEY AUTOINCREMENT,
+           prediction TEXT,
+           result TEXT
+       )
+''')
+
+conn.commit()
 
 # Rich Output
 console = Console()
@@ -148,6 +168,13 @@ def on_message(msg):
                         
             received_data_buffer = []  # Reset the buffer
             #predictions_list.append(prediction) # Append the prediction to the predictions_list
+            
+             # Insert the prediction and result into the database
+            c.execute('''
+                INSERT INTO predictions (prediction, result) VALUES (?, ?)
+            ''', (str(prediction), result)
+            )
+            conn.commit()
         else:
             # Debug: Print the received_data_str length
             #print(f"Received data length: {len(received_data_str)}")  
@@ -164,4 +191,4 @@ while True:
     if msg.error():
         print(f"Consumer error: {msg.error()}")
     else:
-        on_message(msg) 
+        on_message(msg)

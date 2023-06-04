@@ -3,3 +3,4 @@
 /kafka-docker/elastic-data
 /kafka-docker/kibana-data
 /kafka-docker/logstash-data
+spectre-code/spectre-ann/database
