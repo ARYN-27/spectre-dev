@@ -1,4 +1,4 @@
-# anomalay_detector.py
+# anomaly_detector.py
 # https://www.phind.com/search?cache=cf139efb-38e8-4fb5-9cda-5c67194a11a6
 
 from confluent_kafka import Consumer, Producer, KafkaError
@@ -12,7 +12,8 @@ from rich.text import Text
 import warnings
 import os
 import sqlite3
-
+from sklearn.metrics import f1_score
+import datetime
 
 # Suppress Python warnings
 warnings.filterwarnings("ignore")
@@ -20,21 +21,28 @@ warnings.filterwarnings("ignore")
 # Suppress TensorFlow logs
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # Database Setup/Connection
 # Connect to the SQLite database at the specified location
-db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/database/predictions.db"
+db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/database/predictions.db"
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
 
 # Create Table if not exists
 c.execute('''
-       CREATE TABLE IF NOT EXISTS predictions (
-           id INTEGER PRIMARY KEY AUTOINCREMENT,
-           prediction TEXT,
-           result TEXT
-       )
+   CREATE TABLE IF NOT EXISTS predictions (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       prediction TEXT,
+       result TEXT,
+       f1_score TEXT,
+       timestamp DATETIME
+   )
 ''')
+
+# Drop all values in the predictions table
+# FOR DEBUGGING PURPOSE. COMMENT OUT WHEN IN PRODUCTION
+c.execute('DELETE FROM predictions')
 
 conn.commit()
 
@@ -123,13 +131,11 @@ received_data_buffer = []
 predictions_list = []
 
 
-
-
 # Consume messages and process them using the on_message function
 def on_message(msg):
     global received_data_buffer
     
-    threshold = 0.65  # Set the threshold value for anomaly detection
+    threshold = 0.4  # Set the threshold value for anomaly detection
     
     if msg.error():
         print(f"Consumer error: {msg.error()}")
@@ -143,37 +149,35 @@ def on_message(msg):
             prediction = model.predict(X_received, verbose=0)
             #print(f'Prediction: {prediction}')
             
+            threshold = 0.6  # Set the threshold value for anomaly detection
+
+            y_true = np.array([1, 1, 1, 1, 1, 1, 1])  # Set the true labels
+            if np.any(prediction > threshold):
+                y_pred = np.array([1, 1, 1, 1, 1, 1, 1])  # Set the predicted labels
+                result = "ANOMALY"
+            else:
+                y_pred = np.array([0, 0, 0, 0, 0, 0, 0])  # Set the predicted labels
+                result = "BENIGN"
+
+            f1 = f1_score(y_true, y_pred)  # Calculate the F1 score
+            
             # Detection Table
             # Create a table for the prediction output
             table = Table(title="Detection")
             table.add_column("Prediction")
             table.add_column("Result")
+            table.add_column("F1 Score")
             
-            # Check if there is an anomaly and print the appropriate message
-            if np.any(prediction > threshold):
-                #print("==================================")
-                #print("ANOMALY")
-                #print("==================================")
-                result = "ANOMALY"
-            else:
-                #print("==================================")
-                #print("BENIGN")
-                #print("==================================")
-                result = "BENIGN"
-            
-            #for pred in prediction:
-            table.add_row(str(prediction), result)
+            table.add_row(str(prediction), result, str(f1))
                 
             console.print(table)
                         
             received_data_buffer = []  # Reset the buffer
-            #predictions_list.append(prediction) # Append the prediction to the predictions_list
             
-             # Insert the prediction and result into the database
+            # Insert the prediction, result and F1 score into the database
             c.execute('''
-                INSERT INTO predictions (prediction, result) VALUES (?, ?)
-            ''', (str(prediction), result)
-            )
+                INSERT INTO predictions (prediction, result, f1_score, timestamp) VALUES (?, ?, ?, ?)
+            ''', (str(prediction), result, str(f1), current_time))
             conn.commit()
         else:
             # Debug: Print the received_data_str length
@@ -181,6 +185,7 @@ def on_message(msg):
             
             # Debug: Print the received_data_buffer
             print(f"Received data instances: {len(received_data_buffer)}") 
+
             
             
 # Start the Live context manager and consume messages
