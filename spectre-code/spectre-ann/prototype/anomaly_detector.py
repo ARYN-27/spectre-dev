@@ -15,6 +15,7 @@ import sqlite3
 from sklearn.metrics import f1_score
 import datetime
 
+
 # Suppress Python warnings
 warnings.filterwarnings("ignore")
 
@@ -42,7 +43,7 @@ c.execute('''
 
 # Drop all values in the predictions table
 # FOR DEBUGGING PURPOSE. COMMENT OUT WHEN IN PRODUCTION
-c.execute('DELETE FROM predictions')
+#c.execute('DELETE FROM predictions')
 
 conn.commit()
 

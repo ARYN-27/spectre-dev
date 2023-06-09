@@ -3,7 +3,9 @@ import pandas as pd
 import sqlite3
 import time
 from confluent_kafka.admin import AdminClient
-from st_on_hover_tabs import on_hover_tabs
+from streamlit_extras.colored_header import colored_header
+from streamlit_extras.metric_cards import style_metric_cards
+
 
 # Connect to the SQLite database
 db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/database/predictions.db"
@@ -19,19 +21,20 @@ st.set_page_config(
 
 # Add a collapsible sidebar for the refresh button
 with st.sidebar:
-#    st.header("🧠 SPECTRE Options")
-#    #st.write("Click the button below to refresh the data:")
-#    st.caption("Refresh SPECTRE Dashboard")
-#    refresh_button = st.button("Refresh Data")
-#    st.divider()
-#    st.subheader("⚠️ DANGEROUS")
-#    st.caption("Careful when using these options")
-#    del_db = st.button("Delete Database Entry")
+    st.header("🧠 SPECTRE Options")
+    #st.write("Click the button below to refresh the data:")
+    st.caption("Refresh SPECTRE Dashboard")
+    refresh_button = st.button("Refresh Data")
+    st.divider()
+    st.subheader("⚠️ DANGEROUS")
+    st.caption("Careful when using these options")
+    del_db = st.button("Delete Database Entry")
     
     
 # dashboard title
 st.title("🧠 SPECTRE DASHBOARD")
 st.caption("A lightweight solution for DDoS Detection")
+
 
 
 # Function to fetch data from the database and display it
@@ -74,17 +77,33 @@ def display_predictions():
     col_top1, col_top2 = st.columns(2)
     
     with col_top1:
-        st.subheader("Attack Summary")
+        #st.subheader("Attack Summary")
+        colored_header(
+            label="Attack Summary",
+            description="A summary of attacks that occured",
+            color_name="violet-70",
+        )
         # Create a row for the metrics
-        metrics_row = st.columns(2)
+        #metrics_row = st.columns(2)
         
         # Display the count of anomalies and benign results using st.metric
-        with metrics_row[0]:
-            st.metric("DDoS Count", count_data.get('ANOMALY', 0))
-        with metrics_row[1]:
-            st.metric("Benign Count", count_data.get('BENIGN', 0))
+        #with metrics_row[0]:
+        #    st.metric("DDoS Count", count_data.get('ANOMALY', 0))
+        #with metrics_row[1]:
+        #    st.metric("Benign Count", count_data.get('BENIGN', 0))
+        
+        met_col1, met_col2 = st.columns(2)
+        met_col1.metric(label="DDoS Count",value=count_data.get('ANOMALY', 0))
+        met_col2.metric(label="Benign Count",value=count_data.get('BENIGN', 0))
+        style_metric_cards(background_color="#000000", border_left_color= "#00FFD9", border_color="#CCCCCC", border_size_px=1, border_radius_px= 5)
+        
     with col_top2:
-        st.subheader("SPECTRE Details")
+        #st.subheader("SPECTRE Details")
+        colored_header(
+            label="SPECTRE Details",
+            description="Overview on SPECTRE",
+            color_name="violet-70",
+        )
         # Kafka Information
         st.write("KAFKA METRICS")  
         # Create a container to display the number of topics
@@ -104,7 +123,12 @@ def display_predictions():
 
     # Display the table in the first column
     with col1:
-        st.subheader("Log Details")
+        #st.subheader("Log Details")
+        colored_header(
+            label="Log Details",
+            description="Attack Logs",
+            color_name="violet-70",
+        )
         # Add a select box to choose between top 10 results and all results
         table_option = st.selectbox("Choose table display option:", ["Recent 10 Results", "All Results"])
 
@@ -122,10 +146,19 @@ def display_predictions():
 
     # Display the line chart in the second column
     with col2:
-        st.subheader("Attack Graph")
-        st.write("This line chart shows the number of anomalies over time:")
+        #st.subheader("Attack Graph")
+        #st.write("This line chart shows the number of anomalies over time:")
+        colored_header(
+            label="Attack Graph",
+            description="This line chart shows the number of anomalies over time",
+            color_name="violet-70",
+        )
         st.line_chart(line_chart_data)
-         
+    
+    dev_expander = st.expander(label='Developer Area')
+    with dev_expander:
+        st.subheader("SPECTRE Components")
+            
     
 # Refresh the data when the refresh button is clicked
 if refresh_button:
