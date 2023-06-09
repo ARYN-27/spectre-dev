@@ -5,7 +5,8 @@ import time
 from confluent_kafka.admin import AdminClient
 from streamlit_extras.colored_header import colored_header
 from streamlit_extras.metric_cards import style_metric_cards
-
+from streamlit import date_input
+from datetime import datetime
 
 # Connect to the SQLite database
 db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/database/predictions.db"
@@ -35,7 +36,8 @@ with st.sidebar:
 st.title("🧠 SPECTRE DASHBOARD")
 st.caption("A lightweight solution for DDoS Detection")
 
-
+# Create a placeholder for the line chart
+line_chart_placeholder = st.empty()
 
 # Function to fetch data from the database and display it
 def display_predictions():
@@ -64,9 +66,6 @@ def display_predictions():
     # Convert the Timestamp column to a DatetimeIndex
     predictions_df['Timestamp'] = pd.to_datetime(predictions_df['Timestamp'])
 
-    # Create a new DataFrame for the line chart with separate columns for anomalies and benign predictions
-    line_chart_data = predictions_df[predictions_df['Result'] == 'ANOMALY'].set_index('Timestamp').resample('5S').count()['Result']
-
     # Query the count of anomalies and benign results from the database
     c.execute("SELECT Result, COUNT(*) FROM predictions GROUP BY Result")
     count_data = dict(c.fetchall())
@@ -81,7 +80,7 @@ def display_predictions():
         colored_header(
             label="Attack Summary",
             description="A summary of attacks that occured",
-            color_name="violet-70",
+            color_name="yellow-80",
         )
         # Create a row for the metrics
         #metrics_row = st.columns(2)
@@ -95,14 +94,14 @@ def display_predictions():
         met_col1, met_col2 = st.columns(2)
         met_col1.metric(label="DDoS Count",value=count_data.get('ANOMALY', 0))
         met_col2.metric(label="Benign Count",value=count_data.get('BENIGN', 0))
-        style_metric_cards(background_color="#000000", border_left_color= "#00FFD9", border_color="#CCCCCC", border_size_px=1, border_radius_px= 5)
+        style_metric_cards(background_color="#000000", border_left_color= "#E59500", border_color="#CCCCCC", border_size_px=1, border_radius_px= 5)
         
     with col_top2:
         #st.subheader("SPECTRE Details")
         colored_header(
             label="SPECTRE Details",
             description="Overview on SPECTRE",
-            color_name="violet-70",
+            color_name="yellow-80",
         )
         # Kafka Information
         st.write("KAFKA METRICS")  
@@ -114,7 +113,7 @@ def display_predictions():
             else:
                 st.success("Kafka is running properly!")
         st.write("SPECTRE Status")
-        st.write("Version")
+        st.write("Version: 2.0")
 
     st.divider()
     
@@ -127,16 +126,25 @@ def display_predictions():
         colored_header(
             label="Log Details",
             description="Attack Logs",
-            color_name="violet-70",
+            color_name="yellow-80",
         )
+        
+        # Add the date_input widget to the date_col
+        selected_date = date_input("Select a date", value=datetime.today().date())
+
+        # Filter the DataFrame based on the selected date
+        filtered_df = predictions_df[predictions_df['Timestamp'].dt.date == selected_date]
+        
         # Add a select box to choose between top 10 results and all results
         table_option = st.selectbox("Choose table display option:", ["Recent 10 Results", "All Results"])
 
         # Filter the DataFrame based on the selected option
         if table_option == "Recent 10 Results":
-            display_df = predictions_df.tail(10)
+            #display_df = predictions_df.tail(10)
+            display_df = filtered_df.tail(10)
         else:
-            display_df = predictions_df
+            #display_df = predictions_df
+            display_df = filtered_df
 
         # Set the option to display all columns without truncation
         pd.set_option('display.max_columns', None)
@@ -144,6 +152,9 @@ def display_predictions():
         # Display the table with a scrollable container and full width
         st.dataframe(display_df[['Timestamp', 'F1 Score', 'Result']], use_container_width=True, hide_index=True)
 
+    # Line Chart Definition
+    # Create a new DataFrame for the line chart with separate columns for anomalies and benign predictions
+    #line_chart_data = predictions_df[predictions_df['Result'] == 'ANOMALY'].set_index('Timestamp').resample('5S').count()['Result']
     # Display the line chart in the second column
     with col2:
         #st.subheader("Attack Graph")
@@ -151,13 +162,39 @@ def display_predictions():
         colored_header(
             label="Attack Graph",
             description="This line chart shows the number of anomalies over time",
-            color_name="violet-70",
+            color_name="yellow-80",
         )
-        st.line_chart(line_chart_data)
+        st.write(f"Number of rows in predictions_df where Result is ANOMALY: {len(predictions_df[predictions_df['Result'] == 'ANOMALY'])}")
+        
+        # Calculate the time range of the data and set an appropriate resampling frequency
+        time_range = (predictions_df['Timestamp'].max() - predictions_df['Timestamp'].min()).days
+
+        if time_range <= 1:
+            resample_freq = '5Min'
+        elif time_range <= 7:
+            resample_freq = '1H'
+        elif time_range <= 30:
+            resample_freq = '1D'
+        else:
+            resample_freq = '1W'
+        
+        # Filter the DataFrame to only include rows where the 'Result' column is 'ANOMALY'
+        anomaly_df = predictions_df[predictions_df['Result'] == 'ANOMALY']
+
+        # Set the index to the 'Timestamp' column and resample the DataFrame using the calculated frequency
+        anomaly_df = anomaly_df.set_index('Timestamp').resample(resample_freq)
+
+        # Count the number of anomalies within each time bin
+        anomaly_data = anomaly_df.count()['Result']
+
+        # Plot the line chart using the updated `anomaly_data` object
+        st.line_chart(anomaly_data)
     
     dev_expander = st.expander(label='Developer Area')
     with dev_expander:
-        st.subheader("SPECTRE Components")
+        st.header("Welcome to Developer Area")
+        st.caption("Components to added")
+        
             
     
 # Refresh the data when the refresh button is clicked
