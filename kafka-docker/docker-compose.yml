@@ -73,13 +73,13 @@ services:
 #      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
 #    volumes:
 #      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yml
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    ports:
-      - 9090:9000
-    environment:
-      - KAFKA_BROKERCONNECT=localhost:9092
-      - JVM_OPTS=-Xms32m -Xmx64m
+#  kafdrop:
+#    image: obsidiandynamics/kafdrop:latest
+#    ports:
+#      - 9090:9000
+#    environment:
+#      - KAFKA_BROKERCONNECT=localhost:9092
+#      - JVM_OPTS=-Xms32m -Xmx64m
 volumes:
   kafka-data:
     driver: local
