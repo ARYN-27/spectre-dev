@@ -7,6 +7,9 @@ from streamlit_extras.colored_header import colored_header
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit import date_input
 from datetime import datetime
+import streamlit_authenticator as stauth
+import plotly.express as px
+import altair as alt
 
 # Connect to the SQLite database
 db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/database/predictions.db"
@@ -64,8 +67,19 @@ def display_predictions():
     #st.write(f"Unique values in Result column: {predictions_df['Result'].unique()}")
 
     # Convert the Timestamp column to a DatetimeIndex
+    #anomaly_counts = predictions_df[predictions_df['Result'] == 'ANOMALY'].set_index('Timestamp').resample('5T').count()
+    
+    # Convert the 'Timestamp' column to a pandas datetime object
     predictions_df['Timestamp'] = pd.to_datetime(predictions_df['Timestamp'])
+    
+    # Set the 'Timestamp' column as the index and resample
+    # Group the predictions_df by 'Result' and resample by 'Timestamp'
+    grouped_df = predictions_df.groupby('Result').resample('5T', on='Timestamp').count()
 
+    # Filter the grouped_df for 'ANOMALY' and reset the index
+    anomaly_counts = grouped_df.loc['ANOMALY'].reset_index()
+
+        
     # Query the count of anomalies and benign results from the database
     c.execute("SELECT Result, COUNT(*) FROM predictions GROUP BY Result")
     count_data = dict(c.fetchall())
@@ -94,7 +108,7 @@ def display_predictions():
         met_col1, met_col2 = st.columns(2)
         met_col1.metric(label="DDoS Count",value=count_data.get('ANOMALY', 0))
         met_col2.metric(label="Benign Count",value=count_data.get('BENIGN', 0))
-        style_metric_cards(background_color="#000000", border_left_color= "#E59500", border_color="#CCCCCC", border_size_px=1, border_radius_px= 5)
+        style_metric_cards(background_color="#191923", border_left_color= "#E59500", border_color="#E59500", border_size_px=2, border_radius_px= 5)
         
     with col_top2:
         #st.subheader("SPECTRE Details")
@@ -103,19 +117,27 @@ def display_predictions():
             description="Overview on SPECTRE",
             color_name="yellow-80",
         )
-        # Kafka Information
-        st.write("KAFKA METRICS")  
-        # Create a container to display the number of topics
-        with st.container():
-            # Check if there are any errors
-            if not metadata.brokers:
-                st.warning("Kafka is not running properly!")
-            else:
-                st.success("Kafka is running properly!")
-        st.write("SPECTRE Status")
-        st.write("Version: 2.0")
+        kafka_expander = st.expander(label='KAFKA METRICS')
+        with kafka_expander:
+            #st.subheader("Welcome to Developer Area")
+            # Kafka Information
+            #st.write("KAFKA METRICS")  
+            # Create a container to display the number of topics
+            with st.container():
+                # Check if there are any errors
+                if not metadata.brokers:
+                    st.warning("Kafka is not running properly!")
+                else:
+                    st.success("Kafka is running properly!")
+        status_expander = st.expander(label='SPECTRE Status')
+        with status_expander:
+            #st.write("SPECTRE Status")
+            st.write("Version: 2.0")
 
     st.divider()
+    
+    # Add the date_input widget to the date_col
+    selected_date = date_input("Select a Date", value=datetime.today().date())
     
     # Create two columns for displaying the table and line chart side by side
     col1, col2 = st.columns(2)
@@ -129,8 +151,7 @@ def display_predictions():
             color_name="yellow-80",
         )
         
-        # Add the date_input widget to the date_col
-        selected_date = date_input("Select a date", value=datetime.today().date())
+        
 
         # Filter the DataFrame based on the selected date
         filtered_df = predictions_df[predictions_df['Timestamp'].dt.date == selected_date]
@@ -164,31 +185,36 @@ def display_predictions():
             description="This line chart shows the number of anomalies over time",
             color_name="yellow-80",
         )
-        st.write(f"Number of rows in predictions_df where Result is ANOMALY: {len(predictions_df[predictions_df['Result'] == 'ANOMALY'])}")
-        
-        # Calculate the time range of the data and set an appropriate resampling frequency
-        time_range = (predictions_df['Timestamp'].max() - predictions_df['Timestamp'].min()).days
+                      
+        # Add a 'Date' column to the anomaly_counts DataFrame
+        anomaly_counts['Date'] = anomaly_counts['Timestamp'].dt.date
 
-        if time_range <= 1:
-            resample_freq = '5Min'
-        elif time_range <= 7:
-            resample_freq = '1H'
-        elif time_range <= 30:
-            resample_freq = '1D'
+
+        # Filter the anomaly_counts DataFrame based on the selected date
+        anomaly_counts_filtered = anomaly_counts[anomaly_counts['Date'].astype(str) == str(selected_date)]
+        
+        st.write("Anomaly Counts Filtered DataFrame:")
+        st.write(anomaly_counts_filtered)
+        st.write(print("Timestamp data:", anomaly_counts_filtered['Timestamp'].tolist()))
+        st.write(print("Anomaly count data:", anomaly_counts_filtered['ID'].tolist()))
+
+        st.write("Grouped DataFrame:")
+        st.write(grouped_df)
+        
+        st.write("Anomaly Counts DataFrame:")
+        st.write(anomaly_counts)
+        
+        if anomaly_counts_filtered.empty:
+            st.warning("No data available for the selected date.")
         else:
-            resample_freq = '1W'
+            fig = px.line(anomaly_counts_filtered, x='Timestamp', y='ID', title='Anomalies Over Time')
+            fig.update_xaxes(title_text='Timestamp')
+            fig.update_yaxes(title_text='Anomaly Count')
+            st.plotly_chart(fig, use_container_width=True)
+
+
+
         
-        # Filter the DataFrame to only include rows where the 'Result' column is 'ANOMALY'
-        anomaly_df = predictions_df[predictions_df['Result'] == 'ANOMALY']
-
-        # Set the index to the 'Timestamp' column and resample the DataFrame using the calculated frequency
-        anomaly_df = anomaly_df.set_index('Timestamp').resample(resample_freq)
-
-        # Count the number of anomalies within each time bin
-        anomaly_data = anomaly_df.count()['Result']
-
-        # Plot the line chart using the updated `anomaly_data` object
-        st.line_chart(anomaly_data)
     
     dev_expander = st.expander(label='Developer Area')
     with dev_expander:
