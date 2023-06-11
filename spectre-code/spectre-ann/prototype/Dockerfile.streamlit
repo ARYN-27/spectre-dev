@@ -1,0 +1,26 @@
+# Dockerfile.streamlit
+
+FROM python:3.9-slim-bullseye
+
+# Set the working directory
+WORKDIR /prototype
+
+# Install sqlite3
+RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev
+
+# Copy the requirements.txt file into the container
+#COPY requirements.txt .
+
+RUN pip3 install --upgrade pip
+
+# Install any necessary dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Copy the homepage.py file into the container
+#COPY homepage.py .
+
+# Expose the Streamlit port
+EXPOSE 8501
+
+# Start the Streamlit server
+CMD ["streamlit", "run", "homepage.py", "--server.port", "8501", "--server.headless", "True"]

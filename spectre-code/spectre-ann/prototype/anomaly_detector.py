@@ -26,7 +26,7 @@ current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # Database Setup/Connection
 # Connect to the SQLite database at the specified location
-db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/database/predictions.db"
+db_path = "database/predictions.db"
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
 
@@ -62,11 +62,11 @@ console.print(text)
 time.sleep(1)
 
 # Load the pre-trained TensorFlow model
-model = load_model('/home/aryn/spectre-dev/spectre-code/spectre-ann/Model/DDOS_2/A/spectre_ddos_2_h5.h5')
+model = load_model('model/spectre_ddos_2_h5.h5')
 
 # Print the header for the anomaly detector module
 consumer_conf = {
-    'bootstrap.servers': 'localhost:9092',
+    'bootstrap.servers': 'kafka:9092',
     'group.id': 'mygroup',
     'session.timeout.ms': 6000,
     'auto.offset.reset': 'earliest',
@@ -78,7 +78,7 @@ consumer = Consumer(consumer_conf)
 
 # Define Kafka producer configuration for handshake with the consumer
 handshake_producer_conf = {
-    'bootstrap.servers': 'localhost:9092'
+    'bootstrap.servers': 'kafka:9092'
 }
 
 # Create a Kafka producer instance for handshake
@@ -87,7 +87,7 @@ handshake_producer.produce('handshake', 'READY')
 
 # Define Kafka consumer configuration for handshake with the producer
 handshake_consumer_conf = {
-    'bootstrap.servers': 'localhost:9092',
+    'bootstrap.servers': 'kafka:9092',
     'group.id': 'consumer_handshake_group',
     'session.timeout.ms': 6000,
     'auto.offset.reset': 'earliest'

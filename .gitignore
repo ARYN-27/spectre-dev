@@ -1,6 +1,7 @@
 /dataset
-/kafka-docker/kafka-data
-/kafka-docker/elastic-data
-/kafka-docker/kibana-data
-/kafka-docker/logstash-data
-spectre-code/spectre-ann/database
+/kafka-docker/kafka-data/
+/kafka-docker/elastic-data/
+/kafka-docker/kibana-data/
+/kafka-docker/logstash-data/
+spectre-code/spectre-ann/prototype/database/
+spectre-code/spectre-ann/prototype/simulation_csv/

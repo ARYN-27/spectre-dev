@@ -95,17 +95,17 @@ def prod_datapreprocess(csv_file):
 # Read the CSV file and preprocess the data
 
 # DDoS Attack CSV
-#X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
+X = prod_datapreprocess('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
 
 # DDoS Prime CSV
-#X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/DDoS_Dataset/ddos_balanced/final_dataset.csv')
+#X = prod_datapreprocess('/prototype/simulation_csv/final_dataset.csv')
 
 # Bening CSV
-X = prod_datapreprocess('/home/aryn/spectre-dev/dataset/CICIDS2017/MachineLearningCSV/MachineLearningCVE/Monday-WorkingHours.pcap_ISCX.csv')
+#X = prod_datapreprocess('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv')
 
 # Set the producer configuration
 producer_conf = {
-    'bootstrap.servers': 'localhost:9092',
+    'bootstrap.servers': 'kafka:9092',
     'max.in.flight.requests.per.connection': 1   # Add this line to set the maximum number of in-flight messages to 1
 }
 
@@ -114,7 +114,7 @@ producer = Producer(producer_conf)
 
 # Set the handshake consumer configuration
 handshake_consumer_conf = {
-    'bootstrap.servers': 'localhost:9092',
+    'bootstrap.servers': 'kafka:9092',
     'group.id': 'producer_handshake_group',
     'session.timeout.ms': 6000,
     'auto.offset.reset': 'earliest'

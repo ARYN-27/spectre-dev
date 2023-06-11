@@ -1,0 +1,11 @@
+confluent-kafka==1.8.2
+pandas
+numpy
+scikit-learn
+tensorflow==2.12.*
+rich
+streamlit
+streamlit-extras
+plotly
+altair
+passlib

@@ -7,13 +7,12 @@ from streamlit_extras.colored_header import colored_header
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit import date_input
 from datetime import datetime
-import streamlit_authenticator as stauth
 import plotly.express as px
 import altair as alt
 from auth import create_users_table, add_user, verify_password, user_exists
 
 # Connect to the SQLite database
-db_path = "/home/aryn/spectre-dev/spectre-code/spectre-ann/prototype/database/predictions.db"
+db_path = "database/predictions.db"
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
 
@@ -73,14 +72,14 @@ def display_predictions():
     
     # Define Kafka configuration
     kafka_conf = {
-        'bootstrap.servers': 'localhost:9092'
+        'bootstrap.servers': 'kafka:9092'
     }
 
     # Create an AdminClient instance
     admin_client = AdminClient(kafka_conf)
 
     # Get the metadata for the Kafka cluster
-    metadata = admin_client.list_topics(timeout=5)
+    metadata = admin_client.list_topics(timeout=10)
 
     #st.header("DASHBOARD")
         
@@ -147,7 +146,7 @@ def display_predictions():
         with kafka_expander:
             #st.subheader("Welcome to Developer Area")
             # Kafka Information
-            #st.write("KAFKA METRICS")  
+            st.write("KAFKA METRICS")  
             # Create a container to display the number of topics
             with st.container():
                 # Check if there are any errors
