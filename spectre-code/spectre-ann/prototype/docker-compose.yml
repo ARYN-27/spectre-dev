@@ -1,0 +1,92 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Kafka Environment: kafka-docker with kafka-ui
+#   https://hub.docker.com/r/bitnami/kafka
+#   https://hub.docker.com/r/bitnami/zookeeper
+#   https://github.com/provectus/kafka-ui
+#-----------------------------------------------------------------------------------------------------------------------
+
+version: '2'
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CONTROLLER_LISTENERS=PLAINTEXT://:9093
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181  # Change this line
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ENABLE_KRAFT=no
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT://:9093
+      - KAFKA_CFG_REPLICA_FETCH_MAX_BYTES=10485760
+      - KAFKA_CFG_MAX_REQUEST_SIZE=10485760
+    volumes:
+      - kafka-data:/bitnami/kafka
+#  elasticsearch:
+#    image: 'bitnami/elasticsearch:latest'
+#    ports:
+#      - '9200:9200'
+#    environment:
+#      - ELASTICSEARCH_USERNAME=elasticsearch
+#      - ELASTICSEARCH_PASSWORD=elasticsearch
+#    volumes:
+#      - /home/aryn/spectre-dev/kafka-docker/elastic-data:/bitnami/elasticsearch/data
+#  kibana:
+#    image: 'bitnami/kibana:latest'
+#    ports:
+#      - '5601:5601'
+#    environment:
+#      - ELASTICSEARCH_URL=http://elasticsearch:9200
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#      - ELASTICSEARCH_USERNAME=elasticsearch
+#      - ELASTICSEARCH_PASSWORD=elasticsearch
+#      - KIBANA_SERVER_HOST=0.0.0.0
+#    volumes:
+#    - /home/aryn/spectre-dev/kafka-docker/kibana-data:/bitnami/kibana
+#    depends_on:
+#      - elasticsearch
+#  logstash:
+#    image: 'bitnami/logstash:latest'
+#    ports:
+#      - '9600:9600'
+#    volumes:
+#      - /home/aryn/spectre-dev/kafka-docker/logstash-data/pipeline:/opt/bitnami/logstash/pipeline
+#    depends_on:
+#      - kafka
+#      - elasticsearch
+#  kafka-ui:
+#    container_name: kafka-ui
+#    image: provectuslabs/kafka-ui:latest
+#    ports:
+#      - 9090:8080
+#    environment:
+#      - DYNAMIC_CONFIG_ENABLED=true
+#      #- KAFKA_CLUSTERS_0_NAME=local
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+#    volumes:
+#      - /home/aryn/spectre-dev/kafka-docker/kui/config.yml:/etc/kafkaui/dynamic_config.yml
+#  kafdrop:
+#    image: obsidiandynamics/kafdrop:latest
+#    ports:
+#      - 9090:9000
+#    environment:
+#      - KAFKA_BROKERCONNECT=localhost:9092
+#      - JVM_OPTS=-Xms32m -Xmx64m
+volumes:
+  kafka-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/aryn/spectre-dev/kafka-docker/kafka-data
+#networks:
+#  kafka_network:
+#    driver: bridge
