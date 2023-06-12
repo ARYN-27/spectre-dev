@@ -216,7 +216,7 @@ def display_predictions():
         # Filter the anomaly_counts DataFrame based on the selected date
         anomaly_counts_filtered = anomaly_counts[anomaly_counts['Date'].astype(str) == str(selected_date)]
             
-        st.write("Anomaly Counts Filtered DataFrame:")
+        #st.write("Anomaly Counts Filtered DataFrame:")
             
         if anomaly_counts_filtered.empty:
             st.warning("No data available for the selected date.")

@@ -31,10 +31,10 @@ time.sleep(1)
 
 
 # Define a function to preprocess the data
-def prod_datapreprocess(csv_file):
+def prod_datapreprocess(df, dimensions_num_for_PCA=7):
     
     # Read a CSV file and create a DataFrame
-    df = pd.read_csv(csv_file)
+    #df = pd.read_csv(csv_file, chunksize=chunksize)
     
     dimensions_num_for_PCA = 7
     
@@ -95,13 +95,16 @@ def prod_datapreprocess(csv_file):
 # Read the CSV file and preprocess the data
 
 # DDoS Attack CSV
-X = prod_datapreprocess('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
+#X = prod_datapreprocess('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
+X = pd.read_csv('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', chunksize=500)
 
 # DDoS Prime CSV
 #X = prod_datapreprocess('/prototype/simulation_csv/final_dataset.csv')
+#X = pd.read_csv('/prototype/simulation_csv/final_dataset.csv', chunksize=500)
 
 # Bening CSV
 #X = prod_datapreprocess('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv')
+#X = pd.read_csv('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv', chunksize=500)
 
 # Set the producer configuration
 producer_conf = {
@@ -154,12 +157,24 @@ while True:
 producer.produce('handshake', 'READY')
 
 # Iterate through the preprocessed data and send it to the Kafka producer line by line
-for i, row in X.iterrows():
-    #serialized_data = str(row)  # Convert the row to a string
-    serialized_data = ','.join(map(str, row.values))
-    print(f"Serialized data: {serialized_data}")
-    producer.produce('detect_anomalies', serialized_data)
-    time.sleep(1.5)
+#for i, row in X.iterrows():
+#    #serialized_data = str(row)  # Convert the row to a string
+#    serialized_data = ','.join(map(str, row.values))
+#    print(f"Serialized data: {serialized_data}")
+#    producer.produce('detect_anomalies', serialized_data)
+#    time.sleep(1.5)
+
+# Iterate through the chunks of the CSV file
+for chunk in X:
+    # Preprocess the current chunk
+    X = prod_datapreprocess(chunk)
+
+    # Iterate through the preprocessed data and send it to the Kafka producer line by line
+    for i, row in X.iterrows():
+        serialized_data = ','.join(map(str, row.values))
+        print(f"Serialized data: {serialized_data}")
+        producer.produce('detect_anomalies', serialized_data)
+        time.sleep(1.5)
 
 # Flush the producer to ensure all messages are sent
 producer.flush()

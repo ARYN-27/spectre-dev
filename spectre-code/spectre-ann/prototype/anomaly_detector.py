@@ -136,7 +136,7 @@ predictions_list = []
 def on_message(msg):
     global received_data_buffer
     
-    threshold = 0.4  # Set the threshold value for anomaly detection
+    threshold = 0.7 # Set the threshold value for anomaly detection
     
     if msg.error():
         print(f"Consumer error: {msg.error()}")
