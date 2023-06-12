@@ -1,12 +1,12 @@
-#FROM python:3.9-alpine
-#FROM python:3.9
 FROM python:3.9-slim-bullseye
+# Use arm64v8 for Raspberry Pi Deployment
+#FROM arm64v8/python:3.9-slim-bullseye 
 
 # Set the working directory
 WORKDIR /prototype
 
 # Copy the requirements.txt file into the container
-#COPY requirements.txt .
+COPY requirements.txt .
 
 RUN pip3 install --upgrade pip
 
