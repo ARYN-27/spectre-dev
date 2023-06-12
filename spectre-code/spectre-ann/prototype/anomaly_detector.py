@@ -99,7 +99,7 @@ handshake_consumer.subscribe(['handshake'])
 
 # Initialize timeout counter and limit for handshake
 timeout_counter = 0
-timeout_limit = 10
+timeout_limit = 50
 
 # Perform handshake with the producer
 while True:
@@ -136,7 +136,7 @@ predictions_list = []
 def on_message(msg):
     global received_data_buffer
     
-    threshold = 0.7 # Set the threshold value for anomaly detection
+    #threshold = 0.7 # Set the threshold value for anomaly detection
     
     if msg.error():
         print(f"Consumer error: {msg.error()}")
@@ -150,7 +150,7 @@ def on_message(msg):
             prediction = model.predict(X_received, verbose=0)
             #print(f'Prediction: {prediction}')
             
-            threshold = 0.6  # Set the threshold value for anomaly detection
+            threshold = 0.7  # Set the threshold value for anomaly detection
 
             y_true = np.array([1, 1, 1, 1, 1, 1, 1])  # Set the true labels
             if np.any(prediction > threshold):

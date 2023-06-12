@@ -96,7 +96,7 @@ def prod_datapreprocess(df, dimensions_num_for_PCA=7):
 
 # DDoS Attack CSV
 #X = prod_datapreprocess('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
-X = pd.read_csv('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', chunksize=500)
+#X = pd.read_csv('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', chunksize=500)
 
 # DDoS Prime CSV
 #X = prod_datapreprocess('/prototype/simulation_csv/final_dataset.csv')
@@ -104,7 +104,7 @@ X = pd.read_csv('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pc
 
 # Bening CSV
 #X = prod_datapreprocess('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv')
-#X = pd.read_csv('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv', chunksize=500)
+X = pd.read_csv('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv', chunksize=500)
 
 # Set the producer configuration
 producer_conf = {
@@ -129,7 +129,7 @@ handshake_consumer.subscribe(['handshake'])
 
 # Wait for the handshake from the consumer
 timeout_counter = 0
-timeout_limit = 10
+timeout_limit = 50
 
 # Perform handshake with the consumer
 while True:
