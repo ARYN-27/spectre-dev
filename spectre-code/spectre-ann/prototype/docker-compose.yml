@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-#   Kafka Environment: kafka-docker with kafka-ui
+#   Kafka Environment: kafka-docker with Kafka and Zookeeper
 #   https://hub.docker.com/r/bitnami/kafka
 #   https://hub.docker.com/r/bitnami/zookeeper
 #   https://github.com/provectus/kafka-ui
@@ -48,6 +48,7 @@ services:
       - spectre_producer_anomaly_detector
     volumes:
       - /home/aryn/spectre-dev/spectre-code/spectre-ann/prototype:/prototype  # Bind the local directory to the /spectre directory in the container
+      #- - ~/prototype:/prototype # Use this for Raspberry Pi Deployement
 volumes:
   kafka-data:
 
