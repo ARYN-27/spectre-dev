@@ -189,7 +189,7 @@ def on_message(msg):
 
             
             
-# Start the Live context manager and consume messages
+# Start the and consume messages
 while True:
     msg = consumer.poll(1.0)
     if msg is None:

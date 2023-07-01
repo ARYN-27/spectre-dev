@@ -95,7 +95,7 @@ def prod_datapreprocess(df, dimensions_num_for_PCA=7):
 # Read the CSV file and preprocess the data
 
 # DDoS Attack CSV
-#X = prod_datapreprocess('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv')
+#X = prod_datapreprocess('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv')
 #X = pd.read_csv('/prototype/simulation_csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', chunksize=500)
 
 # DDoS Prime CSV
@@ -104,7 +104,11 @@ def prod_datapreprocess(df, dimensions_num_for_PCA=7):
 
 # Bening CSV
 #X = prod_datapreprocess('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv')
-X = pd.read_csv('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv', chunksize=500)
+#X = pd.read_csv('/prototype/simulation_csv/Monday-WorkingHours.pcap_ISCX.csv', chunksize=500)
+
+# Prod CSV
+#X = prod_datapreprocess('/prototype/simulation_csv/prod_csv.csv')
+X = pd.read_csv('/prototype/simulation_csv/prod_csv.csv', chunksize=5000)
 
 # Set the producer configuration
 producer_conf = {

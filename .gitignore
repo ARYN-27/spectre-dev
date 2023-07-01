@@ -4,5 +4,5 @@
 /kafka-docker/kibana-data/
 /kafka-docker/logstash-data/
 spectre-code/spectre-ann/prototype/simulation_csv/
+spectre-code/spectre-ann/prototype/csv_combine.ipynb
 spectre-code/spectre-ann/prototype/database/predictions.db
-
