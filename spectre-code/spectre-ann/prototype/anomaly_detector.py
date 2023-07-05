@@ -150,7 +150,7 @@ def on_message(msg):
             prediction = model.predict(X_received, verbose=0)
             #print(f'Prediction: {prediction}')
             
-            threshold = 0.7  # Set the threshold value for anomaly detection
+            threshold = 0.6  # Set the threshold value for anomaly detection
 
             y_true = np.array([1, 1, 1, 1, 1, 1, 1])  # Set the true labels
             if np.any(prediction > threshold):
