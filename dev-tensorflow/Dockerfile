@@ -35,12 +35,13 @@ RUN pip install -U ipympl
 RUN pip install -U jupyterlab-system-monitor
 #RUN pip install -U jupyterlab-git
 RUN pip install -U jupyterlab-horizon-theme
-RUN pip install -U jupyterlab_materialdarker
 RUN pip install -U jupyterlab_execute_time
 RUN pip install -U jupyterlab_nvdashboard
 RUN pip install -U black
 RUN pip install -U isort
 RUN pip install jupyterlab-code-formatter
+RUN pip install jupyterlab-night
+RUN pip install jupyter-collaboration
 
 #Expose port 8888 for JupyterLab
 EXPOSE 8888

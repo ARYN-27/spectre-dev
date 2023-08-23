@@ -1,9 +1,6 @@
 version: '1.2'
-#volumes:
-  #spectre-dev-volume:
 services:
-  jupyter-lab:
-    #container_name: spectre-container
+  spectre-jupyterlab:
     build: .
     ports:
       - "8888:8888"

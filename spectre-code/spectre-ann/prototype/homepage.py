@@ -49,6 +49,34 @@ def login_page():
         else:
             st.sidebar.error("Invalid username or password")
 
+    account_expander = st.expander(label='User Guide')
+    with account_expander:
+        colored_header(
+            label="Welcome to Spectre. Let's get started",
+            description="A guide to setting up SPECTRE",
+            color_name="yellow-80",
+        )
+        st.markdown("""
+            Thank you for choosing our app! This user manual will guide you through the process of changing file locations, starting the app, and accessing the web UI. Let's get started:
+
+            ## 1. Change File Locations in the Docker Compose
+            - Locate and open the `docker-compose.yml` file in a text editor.
+            - Under the `volumes` section, replace the folder location with the location of your choosing. For example, `<local file directory>:/prototype`.
+            - Modify the file locations as needed to ensure that the files are saved in the desired locations. Make sure to use absolute paths or relative paths that are correct within the Docker context.
+            - Save the changes to the Docker Compose file.
+
+            ## 2. Start the App
+            - Make sure you have Docker installed on your machine. If not, you can download it from the [official website](https://www.docker.com/get-started).
+            - Open your terminal and navigate to the directory where the app is located.
+            - Type `docker compose up -d` and hit enter. This command will start the app in detached mode, allowing it to run in the background.
+
+            ## 3. Access the Web UI with the Provided IP Address and Port
+            - Once the app is up and running, open your web browser.
+            - In the address bar, enter the IP address of the machine where the app is running, followed by `:8501`. For example, if the IP address is `192.168.1.100`, you would type `http://192.168.1.100:8501`.
+            - Press enter to access the web UI of the app.
+
+            Congratulations! You have successfully changed the file locations, started the app, and accessed the web UI. If you encounter any issues or have any questions, please refer to the app's documentation.
+            """)
 # User Register Page
 def register_user():
     #st.subheader("Register a new user")
